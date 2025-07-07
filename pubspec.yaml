@@ -1,5 +1,5 @@
 name: leadkart
-description: "A new Flutter project."
+description: "A college e-commerce app for students and staff"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -35,6 +35,42 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Supabase
+  supabase_flutter: ^2.5.6
+  
+  # State Management
+  provider: ^6.1.2
+  
+  # HTTP and Networking
+  http: ^1.2.1
+  dio: ^5.4.3+1
+  
+  # Image handling
+  image_picker: ^1.0.7
+  cached_network_image: ^3.3.1
+  
+  # URL launcher for WhatsApp
+  url_launcher: ^6.2.5
+  
+  # Form validation
+  email_validator: ^3.0.0
+  
+  # Loading indicators
+  flutter_spinkit: ^5.2.1
+  
+  # Toast messages
+  fluttertoast: ^8.2.4
+  
+  # File handling
+  path: ^1.9.0
+  path_provider: ^2.1.2
+  
+  # UUID generation
+  uuid: ^4.4.0
+  
+  # Date formatting
+  intl: ^0.19.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -58,9 +94,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -74,15 +109,10 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
-  #   - family: Schyler
+  #   - family: Roboto
   #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
+  #       - asset: fonts/Roboto-Regular.ttf
+  #       - asset: fonts/Roboto-Bold.ttf
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,
