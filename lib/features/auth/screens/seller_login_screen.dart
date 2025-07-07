@@ -58,6 +58,7 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Seller Login'),
         backgroundColor: Colors.orange,

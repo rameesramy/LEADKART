@@ -76,6 +76,7 @@ class _CustomerSignupScreenState extends State<CustomerSignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Create Account'),
         leading: IconButton(

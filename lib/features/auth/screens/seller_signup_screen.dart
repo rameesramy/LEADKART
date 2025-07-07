@@ -77,6 +77,7 @@ class _SellerSignupScreenState extends State<SellerSignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Create Seller Account'),
         backgroundColor: Colors.orange,
