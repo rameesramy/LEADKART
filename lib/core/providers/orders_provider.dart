@@ -17,6 +17,7 @@ class OrdersProvider with ChangeNotifier {
   // Getters
   List<OrderModel> get customerOrders => _customerOrders;
   List<OrderModel> get sellerOrders => _filteredSellerOrders;
+  List<OrderModel> get allSellerOrders => _sellerOrders; // Unfiltered orders
   String get orderStatusFilter => _orderStatusFilter;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
@@ -201,10 +202,26 @@ class OrdersProvider with ChangeNotifier {
       _filteredSellerOrders = List.from(_sellerOrders);
     } else {
       _filteredSellerOrders =
-          _sellerOrders
-              .where((order) => order.status == _orderStatusFilter)
-              .toList();
+          _sellerOrders.where((order) {
+            // Handle null status gracefully and trim whitespace
+            final orderStatus = (order.status ?? '').toLowerCase().trim();
+            final filterStatus = _orderStatusFilter.toLowerCase().trim();
+            return orderStatus == filterStatus;
+          }).toList();
     }
+
+    // Debug print to help diagnose filter issues
+    if (kDebugMode) {
+      print('🔍 Filter Debug: "$_orderStatusFilter"');
+      print('📊 Total orders: ${_sellerOrders.length}');
+      print('✅ Filtered orders: ${_filteredSellerOrders.length}');
+      if (_sellerOrders.isNotEmpty) {
+        print(
+          '📋 Available statuses: ${_sellerOrders.map((o) => '"${o.status}"').toSet()}',
+        );
+      }
+    }
+
     _safeNotifyListeners();
   }
 

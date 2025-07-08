@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/providers/products_provider.dart';
 import '../../../core/providers/auth_provider.dart';
-import '../../../core/services/whatsapp_service.dart';
+import '../../../core/providers/orders_provider.dart';
 import '../../../models/product_model.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -71,30 +71,65 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         return;
       }
 
-      final orderMessage =
-          'Hi! I would like to order:\n\n'
-          'Product: ${product!.name}\n'
-          'Quantity: $quantity\n'
-          'Total Price: ₹${(product!.price * quantity).toStringAsFixed(0)}\n\n'
-          'Customer: ${currentUser.username}\n'
-          'Phone: ${currentUser.phone}';
+      // Check if enough stock is available
+      if (quantity > product!.stock) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Only ${product!.stock} items available in stock'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
 
-      final success = await WhatsAppService.sendMessage(
-        phoneNumber: product!.sellerPhone ?? '',
-        message: orderMessage,
+      // Show loading
+      setState(() {
+        isLoading = true;
+      });
+
+      final ordersProvider = Provider.of<OrdersProvider>(
+        context,
+        listen: false,
+      );
+      final productsProvider = Provider.of<ProductsProvider>(
+        context,
+        listen: false,
+      );
+
+      // Create order in database
+      final success = await ordersProvider.createOrder(
+        customerId: currentUser.userId,
+        sellerId: product!.sellerId,
+        productId: product!.productId,
+        quantity: quantity,
+        totalPrice: product!.price * quantity,
+        deliveryLocation:
+            null, // Can be added later with a delivery address input
       );
 
       if (success) {
+        // Update product stock
+        final newStock = product!.stock - quantity;
+        await productsProvider.updateProductStock(product!.productId, newStock);
+
+        // Update local product
+        setState(() {
+          product = product!.copyWith(stock: newStock);
+          quantity = 1; // Reset quantity
+        });
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Order sent via WhatsApp!'),
+            content: Text('Order placed successfully!'),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to send order. Please try again.'),
+          SnackBar(
+            content: Text(
+              'Failed to place order: ${ordersProvider.errorMessage}',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -106,6 +141,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -359,7 +398,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                   ),
                   child: const Text(
-                    'Order via WhatsApp',
+                    'Place Order',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
